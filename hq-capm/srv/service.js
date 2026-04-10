@@ -1,7 +1,7 @@
 const cds = require('@sap/cds')
 
 module.exports = cds.service.impl(async function () {
-  const { Queue, Doctor, Diagnosis } = this.entities
+  const { Queue, Doctor } = this.entities
   const DRAFT_QUEUE = 'HospitalService.Queue.drafts'
 
   const getNextTokenNumber = async (appointmentDate, doctor_ID, req, currentId) => {
@@ -20,7 +20,7 @@ module.exports = cds.service.impl(async function () {
     return (tokens.length ? Math.max(...tokens) : 0) + 1
   }
 
-  const enrichQueueData = async (req) => {
+  const loadMergedData = async req => {
     let data = req.data
 
     if (data.ID) {
@@ -31,6 +31,10 @@ module.exports = cds.service.impl(async function () {
       if (existing) data = { ...existing, ...data }
     }
 
+    return data
+  }
+
+  const fillDerivedFields = async (req, data) => {
     const start = data.startDateTime ? new Date(data.startDateTime) : null
     let end = data.endDateTime ? new Date(data.endDateTime) : null
 
@@ -57,16 +61,6 @@ module.exports = cds.service.impl(async function () {
       data.specialty = doctor.specialty
     }
 
-    if (!data.tokenNumber && data.appointmentDate && data.doctor_ID) {
-      req.data.tokenNumber = await getNextTokenNumber(
-        data.appointmentDate,
-        data.doctor_ID,
-        req,
-        data.ID
-      )
-      data.tokenNumber = req.data.tokenNumber
-    }
-
     return { data, start, end }
   }
 
@@ -75,7 +69,9 @@ module.exports = cds.service.impl(async function () {
     if (!start) return
 
     if (start < now) req.reject(400, 'Appointment cannot be booked in the past.')
-    if (end && end <= start) req.reject(400, 'End date and time must be later than the start date and time.')
+    if (end && end <= start) {
+      req.reject(400, 'End date and time must be later than the start date and time.')
+    }
   }
 
   const validateOverlap = async (req, data, start) => {
@@ -109,18 +105,50 @@ module.exports = cds.service.impl(async function () {
     }
   }
 
-  const processQueue = async req => {
+  const processDraftQueue = async req => {
+  if (!req.data.status) req.data.status = 'Pending'
+
+  const merged = await loadMergedData(req)
+  const { data } = await fillDerivedFields(req, merged)
+
+  if (!data.tokenNumber && data.appointmentDate && data.doctor_ID) {
+    req.data.tokenNumber = await getNextTokenNumber(
+      data.appointmentDate,
+      data.doctor_ID,
+      req,
+      data.ID
+    )
+    data.tokenNumber = req.data.tokenNumber
+  }
+}
+
+  const processActiveQueue = async req => {
     if (!req.data.status) req.data.status = 'Pending'
 
-    const { data, start, end } = await enrichQueueData(req)
+    const merged = await loadMergedData(req)
+    const { data, start, end } = await fillDerivedFields(req, merged)
+
+    if (!data.tokenNumber && data.appointmentDate && data.doctor_ID) {
+      req.data.tokenNumber = await getNextTokenNumber(
+        data.appointmentDate,
+        data.doctor_ID,
+        req,
+        data.ID
+      )
+      data.tokenNumber = req.data.tokenNumber
+    }
+
     validateQueue(req, start, end)
     await validateOverlap(req, data, start)
   }
 
-  this.before('CREATE', Queue, processQueue)
-  this.before('UPDATE', Queue, processQueue)
-  this.before('CREATE', DRAFT_QUEUE, processQueue)
-  this.before('UPDATE', DRAFT_QUEUE, processQueue)
+  // Draft: only light enrichment
+  this.before('CREATE', DRAFT_QUEUE, processDraftQueue)
+  this.before('UPDATE', DRAFT_QUEUE, processDraftQueue)
+
+  // Active: full business logic
+  this.before('CREATE', Queue, processActiveQueue)
+  this.before('UPDATE', Queue, processActiveQueue)
 
   this.before('UPDATE', Queue, async req => {
     const existing = await cds.tx(req).run(
@@ -137,26 +165,5 @@ module.exports = cds.service.impl(async function () {
     if (newStatus === 'Completed' && !existing.consultationEndedAt) {
       req.data.consultationEndedAt = new Date().toISOString()
     }
-  })
-
-  this.after('UPDATE', Queue, async (data, req) => {
-    if (data.status !== 'Completed') return
-
-    const existingDiagnosis = await cds.tx(req).run(
-      SELECT.one.from(Diagnosis).where({ queue_ID: data.ID })
-    )
-    if (existingDiagnosis) return
-
-    await cds.tx(req).run(
-      INSERT.into(Diagnosis).entries({
-        patient_ID: data.patient_ID,
-        doctor_ID: data.doctor_ID,
-        queue_ID: data.ID,
-        diagnosisNotes: '',
-        prescription: '',
-        startDateTime: data.consultationStartedAt || data.startDateTime,
-        endDateTime: data.consultationEndedAt || new Date().toISOString()
-      })
-    )
   })
 })
