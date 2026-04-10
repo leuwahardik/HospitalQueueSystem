@@ -1,0 +1,174 @@
+{
+  "_version": "1.83.0",
+  "sap.app": {
+    "id": "patientenquiry",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:lrop",
+      "version": "1.22.0",
+      "toolsId": "449a32f4-79d7-4e4a-83c4-62a68d642b4e"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/odata/v4/hospital/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "4.01"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.146.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.fe.templates": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "patientenquiry.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "@i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "uri": "i18n/i18n.properties"
+      }
+    },
+    "resources": {
+      "css": []
+    },
+    "routing": {
+      "config": {},
+      "routes": [
+        {
+          "pattern": ":?query:",
+          "name": "PatientEnquiryList",
+          "target": "PatientEnquiryList"
+        },
+        {
+          "pattern": "PatientEnquiry({key}):?query:",
+          "name": "PatientEnquiryObjectPage",
+          "target": "PatientEnquiryObjectPage"
+        },
+        {
+          "pattern": "Queue({key}):?query:",
+          "name": "QueueObjectPage",
+          "target": "QueueObjectPage"
+        }
+      ],
+      "targets": {
+        "PatientEnquiryList": {
+          "type": "Component",
+          "id": "PatientEnquiryList",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "contextPath": "/PatientEnquiry",
+              "variantManagement": "Page",
+              "navigation": {
+                "PatientEnquiry": {
+                  "detail": {
+                    "route": "PatientEnquiryObjectPage"
+                  }
+                },
+                "PatientEnquiry/appointments": {
+                  "detail": {
+                    "route": "QueueObjectPage"
+                  }
+                }
+              },
+              "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.LineItem": {
+                  "tableSettings": {
+                    "type": "ResponsiveTable"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "PatientEnquiryObjectPage": {
+          "type": "Component",
+          "id": "PatientEnquiryObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/PatientEnquiry",
+              "navigation": {
+                "appointments": {
+                  "detail": {
+                    "route": "QueueObjectPage"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "QueueObjectPage": {
+          "type": "Component",
+          "id": "QueueObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/Queue"
+            }
+          }
+        }
+      }
+    }
+  },
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "transactional"
+  },
+  "sap.fe": {
+    "app": {
+      "enableLazyLoading": true
+    }
+  }
+}

@@ -1,0 +1,2 @@
+ID,patient_ID,doctor_ID,queue_ID,startDateTime,endDateTime,prescription,createdAt,createdBy,modifiedAt,modifiedBy
+1,1,2,2,2026-04-07T15:00:00,2026-04-07T15:20:00,Paracetamol for 3 days,2026-04-07T15:00:00,system,2026-04-07T15:20:00,system
