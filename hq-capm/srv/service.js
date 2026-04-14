@@ -1,7 +1,7 @@
 const cds = require('@sap/cds')
 
 module.exports = cds.service.impl(async function () {
-  const { Queue, Doctor } = this.entities
+  const { Queue, Doctor, Diagnosis } = this.entities
   const DRAFT_QUEUE = 'HospitalService.Queue.drafts'
 
   const getNextTokenNumber = async (appointmentDate, doctor_ID, req, currentId) => {
@@ -32,6 +32,67 @@ module.exports = cds.service.impl(async function () {
     }
 
     return data
+  }
+
+  const formatAppointmentWindow = row => {
+    const start = row.startDateTime ? new Date(row.startDateTime) : null
+    const end = row.endDateTime ? new Date(row.endDateTime) : null
+
+    const datePart = row.appointmentDate || (start ? start.toISOString().slice(0, 10) : 'NoDate')
+    const startPart = start ? start.toISOString().slice(11, 16) : '--:--'
+    const endPart = end ? end.toISOString().slice(11, 16) : '--:--'
+    const tokenPart = row.tokenNumber ? `#${row.tokenNumber}` : '#-'
+
+    return `${datePart} ${startPart}-${endPart} ${tokenPart}`
+  }
+
+  const buildDoctorAppointmentsTag = async (req, data) => {
+    if (!data.doctor_ID) {
+      req.data.doctorAppointmentsTag = null
+      data.doctorAppointmentsTag = null
+      return
+    }
+
+    const rows = await cds.tx(req).run(
+      SELECT.from(Queue)
+        .columns('ID', 'appointmentDate', 'startDateTime', 'endDateTime', 'tokenNumber', 'status')
+        .where({ doctor_ID: data.doctor_ID })
+        .orderBy('appointmentDate desc', 'startDateTime desc')
+    )
+
+    const existingRows = rows.filter(row => row.ID !== data.ID)
+    if (!existingRows.length) {
+      req.data.doctorAppointmentsTag = 'No existing appointments for selected doctor'
+      data.doctorAppointmentsTag = req.data.doctorAppointmentsTag
+      return
+    }
+
+    const previewRows = existingRows.slice(0, 4).map(formatAppointmentWindow)
+    const overflow = existingRows.length - previewRows.length
+    const overflowSuffix = overflow > 0 ? ` +${overflow} more` : ''
+    const tagSummary = `${previewRows.join(' | ')}${overflowSuffix}`
+
+    req.data.doctorAppointmentsTag = tagSummary
+    data.doctorAppointmentsTag = tagSummary
+  }
+
+  const getDoctorAppointmentsSummary = async (req, doctor_ID, currentQueueId) => {
+    if (!doctor_ID) return 'Select a doctor first.'
+
+    const rows = await cds.tx(req).run(
+      SELECT.from(Queue)
+        .columns('ID', 'appointmentDate', 'startDateTime', 'endDateTime', 'tokenNumber')
+        .where({ doctor_ID })
+        .orderBy('appointmentDate desc', 'startDateTime desc')
+    )
+
+    const existingRows = rows.filter(row => row.ID !== currentQueueId)
+    if (!existingRows.length) return 'No existing appointments for selected doctor.'
+
+    const previewRows = existingRows.slice(0, 6).map(formatAppointmentWindow)
+    const overflow = existingRows.length - previewRows.length
+    const overflowSuffix = overflow > 0 ? ` | +${overflow} more` : ''
+    return `Existing slots: ${previewRows.join(' | ')}${overflowSuffix}`
   }
 
   const fillDerivedFields = async (req, data) => {
@@ -110,6 +171,7 @@ module.exports = cds.service.impl(async function () {
 
   const merged = await loadMergedData(req)
   const { data } = await fillDerivedFields(req, merged)
+  await buildDoctorAppointmentsTag(req, data)
 
   if (!data.tokenNumber && data.appointmentDate && data.doctor_ID) {
     req.data.tokenNumber = await getNextTokenNumber(
@@ -127,6 +189,7 @@ module.exports = cds.service.impl(async function () {
 
     const merged = await loadMergedData(req)
     const { data, start, end } = await fillDerivedFields(req, merged)
+    await buildDoctorAppointmentsTag(req, data)
 
     if (!data.tokenNumber && data.appointmentDate && data.doctor_ID) {
       req.data.tokenNumber = await getNextTokenNumber(
@@ -165,5 +228,33 @@ module.exports = cds.service.impl(async function () {
     if (newStatus === 'Completed' && !existing.consultationEndedAt) {
       req.data.consultationEndedAt = new Date().toISOString()
     }
+  })
+
+  this.on('showDoctorAppointments', async req => {
+    const doctor_ID = req.data?.doctor_ID
+    const currentQueueId = req.data?.queue_ID || req.data?.ID
+    const summary = await getDoctorAppointmentsSummary(req, doctor_ID, currentQueueId)
+    req.notify(summary)
+    return summary
+  })
+
+  this.before('CREATE', Diagnosis, async req => {
+    const queue_ID = req.data.queue_ID
+    if (!queue_ID) return
+
+    const queue = await cds.tx(req).run(
+      SELECT.one.from(Queue).columns(
+        'patient_ID',
+        'doctor_ID',
+        'startDateTime',
+        'endDateTime'
+      ).where({ ID: queue_ID })
+    )
+    if (!queue) req.reject(400, 'Selected appointment not found for diagnosis.')
+
+    if (!req.data.patient_ID) req.data.patient_ID = queue.patient_ID
+    if (!req.data.doctor_ID) req.data.doctor_ID = queue.doctor_ID
+    if (!req.data.startDateTime) req.data.startDateTime = queue.startDateTime
+    if (!req.data.endDateTime) req.data.endDateTime = queue.endDateTime
   })
 })

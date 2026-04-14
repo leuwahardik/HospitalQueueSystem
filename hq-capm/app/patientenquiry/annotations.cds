@@ -1,18 +1,11 @@
 using HospitalService as service from '../../srv/service';
-using from '@sap/cds/common';
 
 annotate service.PatientEnquiry with @(
     UI.HeaderInfo : {
         TypeName : 'Patient',
         TypeNamePlural : 'Patients',
-        Title : {
-            $Type : 'UI.DataField',
-            Value : patientName,
-        },
-        Description : {
-            $Type : 'UI.DataField',
-            Value : mobile,
-        },
+        Title : { $Type : 'UI.DataField', Value : patientName },
+        Description : { $Type : 'UI.DataField', Value : mobile }
     },
     UI.SelectionFields : [patientName, mobile, gender],
     UI.FieldGroup #PatientDetails : {
@@ -23,26 +16,26 @@ annotate service.PatientEnquiry with @(
             { $Type : 'UI.DataField', Label : 'Gender', Value : gender },
             { $Type : 'UI.DataField', Label : 'Mobile Number', Value : mobile },
             { $Type : 'UI.DataField', Label : 'Symptoms', Value : symptoms }
-        ],
+        ]
     },
     UI.Facets : [
         {
             $Type : 'UI.ReferenceFacet',
             ID : 'PatientDetailsFacet',
             Label : 'Patient Details',
-            Target : '@UI.FieldGroup#PatientDetails',
+            Target : '@UI.FieldGroup#PatientDetails'
         },
         {
             $Type : 'UI.ReferenceFacet',
             ID : 'AppointmentsFacet',
             Label : 'Appointments',
-            Target : 'appointments/@UI.LineItem#PatientAppointments',
+            Target : 'appointments/@UI.LineItem#PatientAppointments'
         },
         {
             $Type : 'UI.ReferenceFacet',
             ID : 'DiagnosisFacet',
             Label : 'Diagnosis',
-            Target : 'diagnoses/@UI.LineItem'
+            Target : 'diagnoses/@UI.LineItem#PatientDiagnoses'
         }
     ],
     UI.LineItem : [
@@ -59,14 +52,8 @@ annotate service.Queue with @(
     UI.HeaderInfo : {
         TypeName : 'Appointment',
         TypeNamePlural : 'Appointments',
-        Title : {
-            $Type : 'UI.DataField',
-            Value : tokenNumber,
-        },
-        Description : {
-            $Type : 'UI.DataField',
-            Value : status,
-        },
+        Title : { $Type : 'UI.DataField', Value : tokenNumber },
+        Description : { $Type : 'UI.DataField', Value : doctorName }
     },
     UI.SelectionFields : [appointmentDate, status, doctor_ID],
     UI.LineItem #PatientAppointments : [
@@ -77,31 +64,40 @@ annotate service.Queue with @(
         { $Type : 'UI.DataField', Label : 'End Time', Value : endDateTime },
         { $Type : 'UI.DataField', Label : 'Token Number', Value : tokenNumber },
         { $Type : 'UI.DataField', Label : 'Status', Value : status },
-        { $Type : 'UI.DataField', Label : 'Notes', Value : notes }
+        { $Type : 'UI.DataField', Label : 'Notes', Value : notes },
+        {
+            $Type : 'UI.DataFieldForAction',
+            Action : 'HospitalService.showDoctorAppointments',
+            Label : 'Show Existing Appointments'
+        }
     ],
     UI.FieldGroup #AppointmentDetails : {
         $Type : 'UI.FieldGroupType',
         Data : [
+            { $Type : 'UI.DataField', Label : 'Patient', Value : patient.patientName },
             { $Type : 'UI.DataField', Label : 'Doctor', Value : doctor_ID },
+            { $Type : 'UI.DataField', Label : 'Specialty', Value : specialty },
             { $Type : 'UI.DataField', Label : 'Appointment Date', Value : appointmentDate },
             { $Type : 'UI.DataField', Label : 'Start Time', Value : startDateTime },
             { $Type : 'UI.DataField', Label : 'End Time', Value : endDateTime },
             { $Type : 'UI.DataField', Label : 'Token Number', Value : tokenNumber },
             { $Type : 'UI.DataField', Label : 'Status', Value : status },
             { $Type : 'UI.DataField', Label : 'Notes', Value : notes }
-        ],
+        ]
     },
     UI.Facets : [
         {
             $Type : 'UI.ReferenceFacet',
             ID : 'AppointmentDetailsFacet',
             Label : 'Appointment Details',
-            Target : '@UI.FieldGroup#AppointmentDetails',
+            Target : '@UI.FieldGroup#AppointmentDetails'
         }
     ]
 );
 
 annotate service.Queue with {
+    doctor @Common.Text : doctorName;
+    doctor @Common.TextArrangement : #TextOnly;
     doctor @Common.ValueListWithFixedValues;
     doctor @Common.ValueList : {
         $Type : 'Common.ValueListType',
@@ -111,6 +107,14 @@ annotate service.Queue with {
                 $Type : 'Common.ValueListParameterInOut',
                 LocalDataProperty : doctor_ID,
                 ValueListProperty : 'ID'
+            },
+            {
+                $Type : 'Common.ValueListParameterDisplayOnly',
+                ValueListProperty : 'doctorName'
+            },
+            {
+                $Type : 'Common.ValueListParameterDisplayOnly',
+                ValueListProperty : 'specialty'
             },
             {
                 $Type : 'Common.ValueListParameterOut',
@@ -126,28 +130,23 @@ annotate service.Queue with {
     };
 };
 
-
 annotate service.Diagnosis with @(
     UI.HeaderInfo : {
         TypeName : 'Diagnosis',
         TypeNamePlural : 'Diagnoses',
-        Title : {
-            $Type : 'UI.DataField',
-            Value : prescription
-        }
+        Title : { $Type : 'UI.DataField', Value : prescription }
     },
-
-    UI.LineItem : [
+    UI.LineItem #PatientDiagnoses : [
         { $Type : 'UI.DataField', Label : 'Doctor', Value : doctor.doctorName },
         { $Type : 'UI.DataField', Label : 'Diagnosis Notes', Value : diagnosisNotes },
         { $Type : 'UI.DataField', Label : 'Prescription', Value : prescription },
         { $Type : 'UI.DataField', Label : 'Start Time', Value : startDateTime },
         { $Type : 'UI.DataField', Label : 'End Time', Value : endDateTime }
     ],
-
     UI.FieldGroup #DiagnosisDetails : {
         $Type : 'UI.FieldGroupType',
         Data : [
+            { $Type : 'UI.DataField', Label : 'Patient', Value : patient.patientName },
             { $Type : 'UI.DataField', Label : 'Doctor', Value : doctor.doctorName },
             { $Type : 'UI.DataField', Label : 'Diagnosis Notes', Value : diagnosisNotes },
             { $Type : 'UI.DataField', Label : 'Prescription', Value : prescription },
@@ -155,7 +154,6 @@ annotate service.Diagnosis with @(
             { $Type : 'UI.DataField', Label : 'End Time', Value : endDateTime }
         ]
     },
-
     UI.Facets : [
         {
             $Type : 'UI.ReferenceFacet',
@@ -168,3 +166,4 @@ annotate service.Diagnosis with @(
 
 annotate service.PatientEnquiry with @Capabilities.InsertRestrictions.Insertable : true;
 annotate service.Queue with @Capabilities.InsertRestrictions.Insertable : true;
+annotate service.Diagnosis with @Capabilities.InsertRestrictions.Insertable : true;

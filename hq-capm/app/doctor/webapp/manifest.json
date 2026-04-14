@@ -92,6 +92,11 @@
           "pattern": "Doctor({key}):?query:",
           "name": "DoctorObjectPage",
           "target": "DoctorObjectPage"
+        },
+        {
+          "pattern": "Doctor({key})/appointments({key2}):?query:",
+          "name": "QueueObjectPage",
+          "target": "QueueObjectPage"
         }
       ],
       "targets": {
@@ -127,7 +132,32 @@
           "options": {
             "settings": {
               "editableHeaderContent": false,
-              "contextPath": "/Doctor"
+              "contextPath": "/Doctor",
+              "navigation": {
+                "appointments": {
+                  "detail": {
+                    "route": "QueueObjectPage"
+                  }
+                }
+              },
+              "controlConfiguration": {
+                "appointments/@com.sap.vocabularies.UI.v1.LineItem#DoctorAppointments": {
+                  "tableSettings": {
+                    "type": "ResponsiveTable"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "QueueObjectPage": {
+          "type": "Component",
+          "id": "QueueObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/Queue"
             }
           }
         }

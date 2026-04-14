@@ -6,6 +6,7 @@ entity Doctor : cuid, managed {
       gender       : String(10);
       mobile       : String(10) @assert.format: '^[0-9]{10}$';
       specialty    : String(100);
+      appointments : Association to many Queue on appointments.doctor = $self;
 }
 
 entity PatientEnquiry : cuid, managed {
@@ -21,8 +22,10 @@ entity PatientEnquiry : cuid, managed {
 entity Queue : cuid, managed {
       patient               : Association to PatientEnquiry;
       doctor                : Association to Doctor;
+      diagnoses             : Association to many Diagnosis on diagnoses.queue = $self;
       doctorName            : String(100);
       specialty             : String(100);
+      doctorAppointmentsTag : String(500);
       appointmentDate       : Date;
       startDateTime         : DateTime;
       endDateTime           : DateTime;
