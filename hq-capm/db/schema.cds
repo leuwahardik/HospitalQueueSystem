@@ -3,7 +3,7 @@ namespace hq;
 
 entity Doctor : cuid, managed {
       doctorName   : String(100);
-      gender       : String(10);
+      gender       : Gender;
       mobile       : String(10) @assert.format: '^[0-9]{10}$';
       specialty    : String(100);
 }

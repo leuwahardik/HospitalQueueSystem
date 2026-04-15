@@ -1,3 +1,1 @@
-ID,patient_ID,doctor_ID,appointmentDate,startDateTime,endDateTime,tokenNumber,status,notes,createdAt,createdBy,modifiedAt,modifiedBy
-1,2,1,2026-04-07,2026-04-07T14:30:00,2026-04-07T15:00:00,1,Pending,First consultation,2026-04-07T14:30:00,system,2026-04-07T14:30:00,system
-2,1,2,2026-04-07,2026-04-07T15:00:00,2026-04-07T15:30:00,1,Completed,Follow-up visit,2026-04-07T15:00:00,system,2026-04-07T15:30:00,system
+ID,patient_ID,doctor_ID,doctorName,specialty,appointmentDate,startDateTime,endDateTime,tokenNumber,status,notes,consultationStartedAt,consultationEndedAt,createdAt,createdBy,modifiedAt,modifiedBy

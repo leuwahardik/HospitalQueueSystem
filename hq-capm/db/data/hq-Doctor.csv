@@ -1,5 +1,1 @@
-doctorName,gender,mobile,specialty
-Hardik,Male,9889997772,General Medicine
-Renvick,Male,9889994442,Orthopedics
-Manimala,Female,9889998872,Pediatrics
-Abhigith,Male,9889996672,Dermatology
+ID,doctorName,gender,mobile,specialty,createdAt,createdBy,modifiedAt,modifiedBy
