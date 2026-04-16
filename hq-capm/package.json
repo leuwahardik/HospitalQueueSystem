@@ -22,7 +22,8 @@
     "undeploy": "cf undeploy hq-capm --delete-services --delete-service-keys --delete-service-brokers",
     "build": "rimraf resources mta_archives && mbt build --mtar archive",
     "deploy": "cf deploy mta_archives/archive.mtar --retries 1",
-    "watch-dashboard": "cds watch --open dashboard/index.html?sap-ui-xx-viewCache=false --livereload false"
+    "watch-dashboard": "cds watch --open dashboard/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "watch-login": "cds watch --open login/index.html?sap-ui-xx-viewCache=false --livereload false"
   },
   "private": true,
   "cds": {

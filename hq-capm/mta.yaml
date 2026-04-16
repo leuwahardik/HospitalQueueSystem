@@ -43,6 +43,10 @@ modules:
       - dashboard.zip
       name: dashboard
       target-path: resources/
+    - artifacts:
+      - login.zip
+      name: login
+      target-path: resources/
 - name: doctor
   type: html5
   path: app/doctor
@@ -56,6 +60,16 @@ modules:
 - name: dashboard
   type: html5
   path: app/dashboard
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: login
+  type: html5
+  path: app/login
   build-parameters:
     build-result: dist
     builder: custom

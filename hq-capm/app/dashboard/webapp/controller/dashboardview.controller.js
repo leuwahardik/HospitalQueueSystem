@@ -9,44 +9,65 @@ sap.ui.define([
     "use strict";
 
     return Controller.extend("dashboard.controller.dashboardview", {
-        onInit() {
+    onInit() {
+    if (localStorage.getItem("isLoggedIn") == "true") {
+        debugger;
+        const email = localStorage.getItem("userEmail") || "";
+
+        if(email== "renvick.f@gmail.com")
+        {
+            const oVizFrame = this.byId("_IDGenNavigationListItem8");
+            oVizFrame.setVisible(false);  
+            const oVizFrameadminnav = this.byId("_IDGenNavigationListItem2");
+            oVizFrameadminnav.setVisible(false);  
+        }
+        else if(email== "abhigithnair01@gmail.com")
+        {
             this._loadData();
-            Format.numericFormatter(ChartFormatter.getInstance());
-            var formatPattern = ChartFormatter.DefaultPattern;
-            this.byId("barChart").setVizProperties({
-                title: {
-                    visible: true,
-                    text: "Cases Status Overview"
-                },
-                valueAxis: {
-                    label: {
-                        formatString: formatPattern.SHORTFLOAT
-                    }
-                }
-            });
+        }
+    }   
 
 
-            const oVizFrame = this.byId("idVizFrame");
-            oVizFrame.setVizProperties({
-                title: {
-                    text: "Case Analysis"
-                },
-                plotArea: {
-                    dataLabel: {
-                        visible: false,
-                        formatString: "0" 
-                    },
-                    colorPalette: [
-                        "#f39c12", // pending
-                        "#27ae60"  // completed
-                    ]
-                },
-                legend: {
-                    visible: true
-                }
-            });
+    if (localStorage.getItem("isLoggedIn") !== "true") {
+        this.getOwnerComponent().getRouter().navTo("login");
+        return;
+    }
 
+   // this._loadData();
+    Format.numericFormatter(ChartFormatter.getInstance());
+    var formatPattern = ChartFormatter.DefaultPattern;
+    this.byId("barChart").setVizProperties({
+        title: {
+            visible: true,
+            text: "Cases Status Overview"
         },
+        valueAxis: {
+            label: {
+                formatString: formatPattern.SHORTFLOAT
+            }
+        }
+    });
+
+    const oVizFrame = this.byId("idVizFrame");
+    oVizFrame.setVizProperties({
+        title: {
+            text: "Case Analysis"
+        },
+        plotArea: {
+            dataLabel: {
+                visible: false,
+                formatString: "0"
+            },
+            colorPalette: [
+                "#f39c12",
+                "#27ae60"
+            ]
+        },
+        legend: {
+            visible: true
+        }
+    });
+},
 
         _loadData: async function () {
             const oVizFrame = this.byId("idVizFrame");
@@ -60,11 +81,11 @@ sap.ui.define([
         },
 
         onCollapseExpandPress() {
-			const oSideNavigation = this.byId("sideNavigation"),
-				bExpanded = oSideNavigation.getExpanded();
+   const oSideNavigation = this.byId("sideNavigation"),
+    bExpanded = oSideNavigation.getExpanded();
 
-			oSideNavigation.setExpanded(!bExpanded);
-		},
+   oSideNavigation.setExpanded(!bExpanded);
+  },
 
         onChangeModel(){
              let total = 10, pending = 20, closed = 30, newItems = 40;

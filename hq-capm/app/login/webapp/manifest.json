@@ -1,7 +1,7 @@
 {
   "_version": "1.83.0",
   "sap.app": {
-    "id": "dashboard",
+    "id": "login",
     "type": "application",
     "i18n": "i18n/i18n.properties",
     "applicationVersion": {
@@ -13,7 +13,7 @@
     "sourceTemplate": {
       "id": "@sap/generator-fiori:basic",
       "version": "1.22.0",
-      "toolsId": "8fc564c4-49e0-46ee-bf83-763c4ff6c5aa"
+      "toolsId": "54d40cb9-1a1f-49be-8721-fdd1c4d6cf2b"
     },
     "dataSources": {
       "mainService": {
@@ -59,7 +59,7 @@
       "i18n": {
         "type": "sap.ui.model.resource.ResourceModel",
         "settings": {
-          "bundleName": "dashboard.i18n.i18n"
+          "bundleName": "login.i18n.i18n"
         }
       },
       "": {
@@ -80,41 +80,38 @@
       ]
     },
     "routing": {
-  "config": {
-    "routerClass": "sap.m.routing.Router",
-    "viewType": "XML",
-    "viewPath": "dashboard.view",
-    "controlId": "app",
-    "controlAggregation": "pages",
-    "async": true
-  },
-  "routes": [
-    {
-      "name": "login",
-      "pattern": "",
-      "target": "login"
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "transition": "slide",
+        "type": "View",
+        "viewType": "XML",
+        "path": "login.view",
+        "async": true,
+        "viewPath": "login.view"
+      },
+      "routes": [
+        {
+          "name": "Routeview1",
+          "pattern": ":?query:",
+          "target": [
+            "Targetview1"
+          ]
+        }
+      ],
+      "targets": {
+        "Targetview1": {
+          "id": "view1",
+          "name": "view1"
+        }
+      }
     },
-    {
-      "name": "dashboardview",
-      "pattern": "dashboardview",
-      "target": "dashboardview"
-    }
-  ],
-  "targets": {
-    "login": {
-      "viewName": "Login"
-    },
-    "dashboardview": {
-      "viewName": "dashboardview"
-    }
-  }
-},
     "rootView": {
-      "viewName": "dashboard.view.App",
+      "viewName": "login.view.App",
       "type": "XML",
       "id": "App",
       "async": true
     }
   }
 }
- 

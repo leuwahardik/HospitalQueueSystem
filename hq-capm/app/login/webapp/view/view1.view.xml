@@ -1,0 +1,27 @@
+<mvc:View controllerName="login.controller.view1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+    <Page id="page" title="{i18n>title}">
+        <content>
+            <VBox id="_IDGenVBox1" justifyContent="Center" alignItems="Center" height="100%">
+                <VBox id="_IDGenVBox2" width="300px">
+                    <Input
+                        id="username"
+                        placeholder="Username"
+                        class="sapUiSmallMarginBottom" />
+
+                    <Input
+                        id="password"
+                        type="Password"
+                        placeholder="Password"
+                        class="sapUiSmallMarginBottom" />
+
+                    <Button id="_IDGenButton"
+                        text="Login"
+                        type="Emphasized"
+                        press=".onLogin" />
+                </VBox>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

@@ -7,4 +7,8 @@ sap.ui.define([
       onInit() {
       }
   });
+  // return BaseController.extend("login.controller.App", {
+  //     onInit() {
+  //     }
+  // });
 });
