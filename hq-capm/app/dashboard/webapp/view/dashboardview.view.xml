@@ -1,0 +1,245 @@
+<mvc:View controllerName="dashboard.controller.dashboardview"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+     xmlns:f="sap.f"
+     xmlns:tnt="sap.tnt"
+    xmlns:layout="sap.ui.layout"
+    xmlns:viz="sap.viz.ui5.controls"
+    xmlns:viz.data="sap.viz.ui5.data"
+    xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds">
+    <!-- <Page id="page" title="{i18n>title}"> -->
+      <!-- Header -->
+    <tnt:ToolHeader id="shellLikeToolHeader" class="sapUiTinyMargin">
+			<Button id="_IDGenButton" icon="sap-icon://menu2" type="Transparent" tooltip="Menu" press=".onCollapseExpandPress">
+				<layoutData>
+					<OverflowToolbarLayoutData id="_IDGenOverflowToolbarLayoutData1" priority="NeverOverflow"/>
+				</layoutData>
+			</Button>
+			<Image id="_IDGenImage" src="test-resources/sap/tnt/images/SAP_Logo.png" decorative="false" press="onLogoPressed" tooltip="SAP Logo" width="60px" height="30px">
+				<layoutData>
+					<OverflowToolbarLayoutData id="_IDGenOverflowToolbarLayoutData2" priority="NeverOverflow"/>
+				</layoutData>
+			</Image>
+			<Title text="Prоduct Name" wrapping="false" id="productName">
+				<layoutData>
+					<OverflowToolbarLayoutData id="_IDGenOverflowToolbarLayoutData3" priority="Disappear"/>
+				</layoutData>
+			</Title>
+			<Text text="Second title" wrapping="false" id="secondTitle">
+				<layoutData>
+					<OverflowToolbarLayoutData id="_IDGenOverflowToolbarLayoutData4" priority="Disappear"/>
+				</layoutData>
+			</Text>
+			<ToolbarSpacer id="_IDGenToolbarSpacer" />
+			<SearchField width="25rem" id="searchField">
+				<layoutData>
+					<OverflowToolbarLayoutData id="_IDGenOverflowToolbarLayoutData5" priority="Low" group="1"/>
+				</layoutData>
+			</SearchField>
+			<Button visible="false" icon="sap-icon://search" type="Transparent" id="searchButton" tooltip="Search"/>
+			<OverflowToolbarButton id="_IDGenOverflowToolbarButton" icon="sap-icon://da" type="Transparent" tooltip="Joule" text="Joule">
+				<layoutData>
+					<OverflowToolbarLayoutData id="_IDGenOverflowToolbarLayoutData6" group="2"/>
+				</layoutData>
+			</OverflowToolbarButton>
+			<OverflowToolbarButton id="_IDGenOverflowToolbarButton1" icon="sap-icon://source-code" type="Transparent" tooltip="Action 1" text="Action 1">
+				<layoutData>
+					<OverflowToolbarLayoutData id="_IDGenOverflowToolbarLayoutData7" group="2"/>
+				</layoutData>
+			</OverflowToolbarButton>
+			<OverflowToolbarButton id="_IDGenOverflowToolbarButton2" icon="sap-icon://card" type="Transparent" tooltip="Action 2" text="Action 2">
+				<layoutData>
+					<OverflowToolbarLayoutData id="_IDGenOverflowToolbarLayoutData8" group="2"/>
+				</layoutData>
+			</OverflowToolbarButton>
+			<OverflowToolbarButton id="_IDGenOverflowToolbarButton3" icon="sap-icon://action-settings" type="Transparent" text="Settings"/>
+			<Button id="_IDGenButton1" icon="sap-icon://bell" type="Transparent" tooltip="Notification">
+				<layoutData>
+					<OverflowToolbarLayoutData id="_IDGenOverflowToolbarLayoutData9" priority="NeverOverflow"/>
+				</layoutData>
+			</Button>
+			<tnt:ToolHeaderUtilitySeparator id="_IDGenToolHeaderUtilitySeparator"/>
+			<OverflowToolbarButton id="_IDGenOverflowToolbarButton4" icon="sap-icon://grid" type="Transparent" text="My Products" tooltip="My Products"/>
+			<Avatar id="_IDGenAvatar" src="test-resources/sap/tnt/images/Woman_avatar_01.png" displaySize="XS" press=".onAvatarPressed" tooltip="Profile">
+				<layoutData>
+					<OverflowToolbarLayoutData id="_IDGenOverflowToolbarLayoutData10" priority="NeverOverflow"/>
+				</layoutData>
+			</Avatar>
+		</tnt:ToolHeader>
+
+    <HBox id="_IDGenHBox3" >
+      <!-- Side Navigation -->
+      <VBox id="_IDGenVBox3">
+        <tnt:SideNavigation id="sideNavigation" selectedKey="walked" expanded="false">
+          <tnt:NavigationList id="_IDGenNavigationList">
+            <tnt:NavigationListItem id="_IDGenNavigationListItem1" text="Home" icon="sap-icon://home"/>
+            <tnt:NavigationListGroup id="_IDGenNavigationListGroup" text="Users">
+              <tnt:NavigationListItem id="_IDGenNavigationListItem2" text="Admin" icon="sap-icon://people-connected" press ="._loadData"/>
+              <tnt:NavigationListItem id="_IDGenNavigationListItem3" text="Doctors" icon="sap-icon://building" >
+                <tnt:NavigationListItem id="_IDGenNavigationListItem4" text="Doctor 01" press=".doctorOneSelected" />
+                <tnt:NavigationListItem id="_IDGenNavigationListItem5" text="Doctor 02" />
+              </tnt:NavigationListItem>
+              <tnt:NavigationListItem id="_IDGenNavigationListItem6" text="Staff" icon="sap-icon://mileage" >
+                <tnt:NavigationListItem id="_IDGenNavigationListItem7" text="Staff 01" />
+                <tnt:NavigationListItem id="walked" text="Staff 02" />
+              </tnt:NavigationListItem>
+            </tnt:NavigationListGroup>
+            <tnt:NavigationListGroup id="_IDGenNavigationListGroup1" text="Pages">
+              <tnt:NavigationListItem id="_IDGenNavigationListItem8" text="Queue" icon="sap-icon://list" press=".onNavigateToPatient"/>
+              <tnt:NavigationListItem id="_IDGenNavigationListItem9" text="Doctors" icon="sap-icon://doctor" press=".onNavigateToDoctor"/>
+              <!-- <tnt:NavigationListItem id="_IDGenNavigationListItem10" text="Map" icon="sap-icon://map-2" /> -->
+            </tnt:NavigationListGroup>
+            <!-- <tnt:NavigationListGroup id="_IDGenNavigationListGroup2" text="Restricted" enabled="false">
+              <tnt:NavigationListItem id="_IDGenNavigationListItem11" text="Running" icon="sap-icon://physical-activity" />
+              <tnt:NavigationListItem id="_IDGenNavigationListItem12" text="Scissors" icon="sap-icon://scissors" />
+            </tnt:NavigationListGroup>
+            <tnt:NavigationListItem id="_IDGenNavigationListItem13" text="Transport" icon="sap-icon://passenger-train" /> -->
+          </tnt:NavigationList>
+          <!-- <tnt:fixedItem>
+            <tnt:NavigationList id="_IDGenNavigationList1">
+              <tnt:NavigationListItem id="_IDGenNavigationListItem14" text="Bar Chart" icon="sap-icon://bar-chart" />
+              <tnt:NavigationListItem id="_IDGenNavigationListItem15" selectable="false" href="https://sap.com" target="_blank" text="External Link" icon="sap-icon://attachment" />
+              <tnt:NavigationListItem id="_IDGenNavigationListItem16" selectable="false" href="https://sap.com" target="_top" text="External Link _top" icon="sap-icon://attachment" />
+              <tnt:NavigationListItem id="_IDGenNavigationListItem17" text="Compare" icon="sap-icon://compare" />
+            </tnt:NavigationList>
+          </tnt:fixedItem> -->
+        </tnt:SideNavigation>
+      </VBox>
+      <VBox id="_IDGenVBox" class="sapUiSmallMargin" width="100%">
+        <HBox id="_IDGenHBox1" justifyContent="SpaceBetween">
+        <!-- <HBox id="_IDGenHBox1"> -->
+          <GenericTile id="_IDGenGenericTile1" header="Total Cases" subheader="Actuals" press="press">
+              <TileContent id="_IDGenTileContent">
+                  <NumericContent id="_IDGenNumericContent" value="{dashboard>/total}" icon="sap-icon://business-objects-experience" scale="EUR" indicator="Up" />
+              </TileContent>
+          </GenericTile>
+
+          <GenericTile id="_IDGenGenericTile3" header="Pending Cases">
+            <TileContent id="_IDGenTileContent2">
+              <NumericContent id="_IDGenNumericContent2" value="{dashboard>/pending}" icon="sap-icon://pending"/>
+            </TileContent>
+          </GenericTile>
+
+          <GenericTile id="_IDGenGenericTile4" header="Closed Cases">
+            <TileContent id="_IDGenTileContent3">
+              <NumericContent id="_IDGenNumericContent3" value="{dashboard>/closed}" icon="sap-icon://accept"/>
+            </TileContent>
+          </GenericTile>
+
+          <GenericTile id="_IDGenGenericTile2" header="Cancelled Cases" subheader="">
+            <TileContent id="_IDGenTileContent1">
+              <NumericContent id="_IDGenNumericContent1" value="{dashboard>/cancelled}" icon="sap-icon://decline" />
+            </TileContent>
+          </GenericTile>
+
+        </HBox>
+
+        <!-- CHARTS SECTION -->
+        <HBox id="_IDGenHBox2" class="sapUiMediumMarginTop" justifyContent="SpaceBetween">
+
+          <!-- LEFT CHART -->
+          <VBox id="_IDGenVBox1" width="60%">
+            <!-- <Title id="_IDGenTitle" text="Sales Value"/> -->
+            
+            <viz:VizFrame
+              id="barChart"
+              vizType="column"
+              width="100%"
+              height="300px">
+
+              <!-- Dataset -->
+              <viz:dataset>
+                <viz.data:FlattenedDataset id="_IDGenFlattenedDataset1" data="{/QueueStatusAnalytics}">
+
+                  <viz.data:dimensions>
+                    <viz.data:DimensionDefinition id="_IDGenDimensionDefinition"
+                      name="Status"
+                      value="{status}" />
+                  </viz.data:dimensions>
+
+                  <viz.data:measures>
+                    <viz.data:MeasureDefinition id="_IDGenMeasureDefinition"
+                      name="Cases"
+                      value="{Total}" />
+                  </viz.data:measures>
+
+                </viz.data:FlattenedDataset>
+              </viz:dataset>
+
+              <!-- Feeds -->
+              <viz:feeds>
+                <viz.feeds:FeedItem id="_IDGenFeedItem"
+                  uid="valueAxis"
+                  type="Measure"
+                  values="Cases" />
+                  
+                <viz.feeds:FeedItem id="_IDGenFeedItem1"
+                  uid="categoryAxis"
+                  type="Dimension"
+                  values="Status" />
+              </viz:feeds>
+
+              <!-- Optional Styling
+              <viz:vizProperties>
+                <viz:VizProperties id="_IDGenVizProperties">
+                  <plotArea>
+                    <dataLabel visible="true"/>
+                  </plotArea>
+                  <title visible="false"/>
+                </viz:VizProperties>
+              </viz:vizProperties> -->
+
+            </viz:VizFrame>
+          </VBox>
+
+          <!-- RIGHT CHART (MAP PLACEHOLDER) -->
+          <VBox id="_IDGenVBox2" width="38%">
+            <!-- <Panel id="_IDGenPanel" height="300px"> -->
+            <viz:VizFrame
+              id="idVizFrame"
+              width="100%"
+              height="400px"
+              vizType="column">
+
+              <!-- Dataset -->
+              <viz:dataset>
+                  <viz.data:FlattenedDataset id="_IDGenFlattenedDataset2" data="{/DoctorStatus}">
+                      <viz.data:dimensions>
+                          <viz.data:DimensionDefinition id="_IDGenDimensionDefinition1"
+                              name="Doctors"
+                              value="{doctorName}" />
+                      </viz.data:dimensions>
+
+                      <viz.data:measures>
+                          <viz.data:MeasureDefinition id="_IDGenMeasureDefinition1"
+                              name="Pending Cases"
+                              value="{pendingCases}" />
+                          <viz.data:MeasureDefinition id="_IDGenMeasureDefinition2"
+                              name="Completed Cases"
+                              value="{completedCases}" />
+                      </viz.data:measures>
+                  </viz.data:FlattenedDataset>
+              </viz:dataset>
+
+              <!-- Feeds -->
+              <viz:feeds>
+                  <viz.feeds:FeedItem id="_IDGenFeedItem2"
+                      uid="valueAxis"
+                      type="Measure"
+                      values="Pending Cases,Completed Cases"/>
+                  
+                  <viz.feeds:FeedItem id="_IDGenFeedItem3"
+                      uid="categoryAxis"
+                      type="Dimension"
+                      values="Doctors"/>
+              </viz:feeds>
+
+          </viz:VizFrame>
+            <!-- </Panel> -->
+          </VBox>
+
+        </HBox>
+        </VBox>
+      <!-- </Page> -->
+    </HBox>
+</mvc:View>

@@ -39,9 +39,23 @@ modules:
       - doctor.zip
       name: doctor
       target-path: resources/
+    - artifacts:
+      - dashboard.zip
+      name: dashboard
+      target-path: resources/
 - name: doctor
   type: html5
   path: app/doctor
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: dashboard
+  type: html5
+  path: app/dashboard
   build-parameters:
     build-result: dist
     builder: custom

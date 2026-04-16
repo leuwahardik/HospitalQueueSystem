@@ -147,23 +147,23 @@ module.exports = cds.service.impl(async function () {
   this.before('UPDATE', DRAFT_QUEUE, processDraftQueue)
 
   // Active: full business logic
-  this.before('CREATE', Queue, processActiveQueue)
-  this.before('UPDATE', Queue, processActiveQueue)
+  // this.before('CREATE', Queue, processActiveQueue)
+  // this.before('UPDATE', Queue, processActiveQueue)
 
-  this.before('UPDATE', Queue, async req => {
-    const existing = await cds.tx(req).run(
-      SELECT.one.from(Queue).where({ ID: req.data.ID })
-    )
-    const newStatus = req.data.status
+  // this.before('UPDATE', Queue, async req => {
+  //   const existing = await cds.tx(req).run(
+  //     SELECT.one.from(Queue).where({ ID: req.data.ID })
+  //   )
+  //   const newStatus = req.data.status
 
-    if (!existing || !newStatus || existing.status === newStatus) return
+  //   if (!existing || !newStatus || existing.status === newStatus) return
 
-    if (newStatus === 'InProgress' && !existing.consultationStartedAt) {
-      req.data.consultationStartedAt = new Date().toISOString()
-    }
+  //   if (newStatus === 'InProgress' && !existing.consultationStartedAt) {
+  //     req.data.consultationStartedAt = new Date().toISOString()
+  //   }
 
-    if (newStatus === 'Completed' && !existing.consultationEndedAt) {
-      req.data.consultationEndedAt = new Date().toISOString()
-    }
-  })
+  //   if (newStatus === 'Completed' && !existing.consultationEndedAt) {
+  //     req.data.consultationEndedAt = new Date().toISOString()
+  //   }
+  // })
 })

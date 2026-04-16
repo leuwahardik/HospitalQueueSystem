@@ -1,0 +1,1 @@
+using DashboardService as service from '../../srv/service';
